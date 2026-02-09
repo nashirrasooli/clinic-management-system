@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.dto.AppointmentDto;
 import com.example.backend.dto.PrescriptionDto;
 import com.example.backend.entity.Appointment;
 import com.example.backend.entity.Prescription;
+import com.example.backend.mapper.AppointmentMapper;
 import com.example.backend.mapper.PrescriptionMapper;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.PrescriptionRepository;
@@ -40,4 +42,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         return PrescriptionMapper.toDto(
                 prescriptionRepository.save(prescription));
     }
+
+    @Override
+    public List<PrescriptionDto> getAll() {
+        return prescriptionRepository.findAll()
+                .stream()
+                .map(PrescriptionMapper::toDto)
+                .toList();
+    }
+
 }
