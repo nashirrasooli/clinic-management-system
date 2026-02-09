@@ -2,17 +2,17 @@ package com.example.backend.service;
 
 import java.util.List;
 
-import com.example.backend.entity.Patient;
+import com.example.backend.dto.PatientDto;
 
 public interface PatientService {
 
-    Patient createPatient(Patient patient);
+    PatientDto create(PatientDto dto);
 
-    Patient getPatientById(Long id);
+    PatientDto getById(Long id);
 
-    List<Patient> getAllPatients();
+    List<PatientDto> getAll();
 
-    Patient updatePatient(Long id, Patient patient);
+    PatientDto update(Long id, PatientDto dto);
 
-    void deletePatient(Long id);
+    void delete(Long id);
 }

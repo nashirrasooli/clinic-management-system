@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.dto.PatientDto;
 import com.example.backend.entity.Patient;
+import com.example.backend.mapper.PatientMapper;
 import com.example.backend.repository.PatientRepository;
 import com.example.backend.service.PatientService;
 
@@ -18,32 +20,40 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient createPatient(Patient patient) {
-        return patientRepository.save(patient);
+    public PatientDto create(PatientDto dto) {
+        Patient patient = PatientMapper.toEntity(dto);
+        return PatientMapper.toDto(patientRepository.save(patient));
     }
 
     @Override
-    public Patient getPatientById(Long id) {
-        return patientRepository.findById(id)
+    public PatientDto getById(Long id) {
+        Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
+        return PatientMapper.toDto(patient);
     }
 
     @Override
-    public List<Patient> getAllPatients() {
-        return patientRepository.findAll();
+    public List<PatientDto> getAll() {
+        return patientRepository.findAll()
+                .stream()
+                .map(PatientMapper::toDto)
+                .toList();
     }
 
     @Override
-    public Patient updatePatient(Long id, Patient patient) {
-        Patient existing = getPatientById(id);
-        existing.setFullName(patient.getFullName());
-        existing.setPhone(patient.getPhone());
-        existing.setDateOfBirth(patient.getDateOfBirth());
-        return patientRepository.save(existing);
+    public PatientDto update(Long id, PatientDto dto) {
+        Patient existing = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        existing.setFullName(dto.getFullName());
+        existing.setPhone(dto.getPhone());
+        existing.setDateOfBirth(dto.getDateOfBirth());
+
+        return PatientMapper.toDto(patientRepository.save(existing));
     }
 
     @Override
-    public void deletePatient(Long id) {
+    public void delete(Long id) {
         patientRepository.deleteById(id);
     }
 }

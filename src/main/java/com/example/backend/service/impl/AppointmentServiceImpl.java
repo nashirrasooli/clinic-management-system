@@ -4,45 +4,48 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.dto.AppointmentDto;
 import com.example.backend.entity.Appointment;
+import com.example.backend.entity.Doctor;
+import com.example.backend.entity.Patient;
+import com.example.backend.mapper.AppointmentMapper;
 import com.example.backend.repository.AppointmentRepository;
+import com.example.backend.repository.DoctorRepository;
+import com.example.backend.repository.PatientRepository;
 import com.example.backend.service.AppointmentService;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
 
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository) {
+    public AppointmentServiceImpl(
+            AppointmentRepository appointmentRepository,
+            PatientRepository patientRepository,
+            DoctorRepository doctorRepository) {
         this.appointmentRepository = appointmentRepository;
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
     }
 
     @Override
-    public Appointment createAppointment(Appointment appointment) {
-        return appointmentRepository.save(appointment);
-    }
+    public AppointmentDto create(AppointmentDto dto) {
 
-    @Override
-    public Appointment getAppointmentById(Long id) {
-        return appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-    }
+        Patient patient = patientRepository.findById(dto.getPatientId())
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-    @Override
-    public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAll();
-    }
+        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-    @Override
-    public Appointment updateAppointment(Long id, Appointment appointment) {
-        Appointment existing = getAppointmentById(id);
-        existing.setAppointmentTime(appointment.getAppointmentTime());
-        existing.setStatus(appointment.getStatus());
-        return appointmentRepository.save(existing);
-    }
+        Appointment appointment = new Appointment();
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+        appointment.setAppointmentTime(dto.getAppointmentTime());
+        appointment.setStatus(dto.getStatus());
 
-    @Override
-    public void deleteAppointment(Long id) {
-        appointmentRepository.deleteById(id);
+        return AppointmentMapper.toDto(
+                appointmentRepository.save(appointment));
     }
 }

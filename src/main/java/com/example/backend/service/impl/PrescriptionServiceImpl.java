@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.dto.PrescriptionDto;
+import com.example.backend.entity.Appointment;
 import com.example.backend.entity.Prescription;
+import com.example.backend.mapper.PrescriptionMapper;
+import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.PrescriptionRepository;
 import com.example.backend.service.PrescriptionService;
 
@@ -12,38 +16,28 @@ import com.example.backend.service.PrescriptionService;
 public class PrescriptionServiceImpl implements PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository) {
+    public PrescriptionServiceImpl(
+            PrescriptionRepository prescriptionRepository,
+            AppointmentRepository appointmentRepository) {
         this.prescriptionRepository = prescriptionRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @Override
-    public Prescription createPrescription(Prescription prescription) {
-        return prescriptionRepository.save(prescription);
-    }
+    public PrescriptionDto create(PrescriptionDto dto) {
 
-    @Override
-    public Prescription getPrescriptionById(Long id) {
-        return prescriptionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prescription not found"));
-    }
+        Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-    @Override
-    public List<Prescription> getAllPrescriptions() {
-        return prescriptionRepository.findAll();
-    }
+        Prescription prescription = new Prescription();
+        prescription.setAppointment(appointment);
+        prescription.setMedication(dto.getMedication());
+        prescription.setDosage(dto.getDosage());
+        prescription.setInstructions(dto.getInstructions());
 
-    @Override
-    public Prescription updatePrescription(Long id, Prescription prescription) {
-        Prescription existing = getPrescriptionById(id);
-        existing.setMedication(prescription.getMedication());
-        existing.setDosage(prescription.getDosage());
-        existing.setInstructions(prescription.getInstructions());
-        return prescriptionRepository.save(existing);
-    }
-
-    @Override
-    public void deletePrescription(Long id) {
-        prescriptionRepository.deleteById(id);
+        return PrescriptionMapper.toDto(
+                prescriptionRepository.save(prescription));
     }
 }

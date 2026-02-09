@@ -2,17 +2,15 @@ package com.example.backend.service;
 
 import java.util.List;
 
-import com.example.backend.entity.User;
+import com.example.backend.dto.UserDto;
 
 public interface UserService {
 
-    User createUser(User user);
+    UserDto createUser(UserDto dto);
 
-    User getUserById(Long id);
+    List<UserDto> getAllUsers();
 
-    List<User> getAllUsers();
-
-    User updateUser(Long id, User user);
+    UserDto getUserById(Long id);
 
     void deleteUser(Long id);
 }

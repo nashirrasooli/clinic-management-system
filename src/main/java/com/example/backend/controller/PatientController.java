@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.entity.Patient;
+import com.example.backend.dto.PatientDto;
 import com.example.backend.service.PatientService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/patients")
@@ -26,30 +28,31 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Patient> create(@RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.createPatient(patient));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Patient>> getAll() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+    public ResponseEntity<PatientDto> create(
+            @Valid @RequestBody PatientDto dto) {
+        return ResponseEntity.ok(patientService.create(dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(patientService.getPatientById(id));
+    public ResponseEntity<PatientDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(patientService.getById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PatientDto>> getAll() {
+        return ResponseEntity.ok(patientService.getAll());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> update(
+    public ResponseEntity<PatientDto> update(
             @PathVariable Long id,
-            @RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.updatePatient(id, patient));
+            @Valid @RequestBody PatientDto dto) {
+        return ResponseEntity.ok(patientService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        patientService.deletePatient(id);
+        patientService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
