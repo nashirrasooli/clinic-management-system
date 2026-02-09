@@ -33,9 +33,14 @@ public class BillingServiceImpl implements BillingService {
         return billingRepository.save(billing);
     }
 
+    // @Override
+    // public Billing getBillByAppointment(Long appointmentId) {
+    // return billingRepository.findByAppointmentId(appointmentId);
+    // }
     @Override
     public Billing getBillByAppointment(Long appointmentId) {
-        return billingRepository.findByAppointmentId(appointmentId);
+        return billingRepository.findByAppointmentId(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Billing not found"));
     }
 
     @Override
