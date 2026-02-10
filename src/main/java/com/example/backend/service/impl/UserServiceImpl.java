@@ -13,6 +13,7 @@ import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.RoleRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
+import com.example.backend.entity.RoleName;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         Set<Role> roles = dto.getRoles()
                 .stream()
-                .map(r -> roleRepository.findByName(r)
+                .map(r -> roleRepository.findByName(RoleName.valueOf(r))
                         .orElseThrow(() -> new RuntimeException("Role not found: " + r)))
                 .collect(Collectors.toSet());
 

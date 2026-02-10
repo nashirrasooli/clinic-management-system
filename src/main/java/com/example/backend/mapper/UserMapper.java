@@ -21,7 +21,7 @@ public class UserMapper {
         // Map roles from Role entities to role names (strings)
         Set<String> roles = user.getRoles()
                 .stream()
-                .map(role -> role.getName()) // role.getName() returns String
+                .map(role -> role.getName().name())
                 .collect(Collectors.toSet());
 
         dto.setRoles(roles);
